@@ -2,6 +2,36 @@
 
 20×20 的贪吃蛇，纯原生 HTML / CSS / JS，没有构建步骤。双击 `index.html` 就能玩，也可以丢到任意静态目录或 GitHub Pages 子路径。
 
+## 界面
+
+开始界面可以选择四档难度，也可以直接看 AI 演示。
+
+![开始界面](docs/screenshots/start.png)
+
+对局时，蛇头、果实和当前速度都在棋盘上。最高分会在吃到果实的当下写入。
+
+![对局](docs/screenshots/playing.png)
+
+空格或 P 暂停。窗口失焦时也会自动暂停。
+
+![暂停](docs/screenshots/paused.png)
+
+撞墙或咬到自己会结束这一局，可以重开，也可以改看 AI。
+
+![游戏结束](docs/screenshots/over.png)
+
+AI 演示可以在 ×1、×4、×16、×64 和 MAX 之间切换。
+
+![AI 演示](docs/screenshots/ai.png)
+
+MAX 大约 20–30 秒填满棋盘。通关时会写明用了 397 个果实。
+
+![通关](docs/screenshots/win.png)
+
+手机竖屏用屏幕方向键，中间一键暂停。横屏矮屏会收起方向键，改为在棋盘上滑动。
+
+![手机竖屏](docs/screenshots/mobile.png)
+
 ## 怎么玩
 
 - 方向键或 WASD 转向。转向会先排进队列（最多 2 次），不能 180° 掉头。
