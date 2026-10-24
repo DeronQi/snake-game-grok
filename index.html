@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#05080f">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="离线可玩的贪吃蛇。四档难度，能填满棋盘的 AI 演示，可安装到桌面。">
+  <title>得分 0 · 贪吃蛇</title>
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <div id="app" data-phase="ready" data-ai="0">
+    <header>
+      <h1><span class="logo" aria-hidden="true"></span>贪吃蛇</h1>
+      <div class="toolbar" role="toolbar" aria-label="游戏控制">
+        <button type="button" id="btn-ai" aria-pressed="false" aria-label="AI 演示">🤖</button>
+        <button type="button" id="btn-sound" aria-pressed="false" aria-label="关闭声音">
+          <svg class="icon icon-on" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9.5h3.2L12 5v14l-4.8-4.5H4v-5z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M15.5 9.2a4 4 0 0 1 0 5.6M17.8 7a7 7 0 0 1 0 10"/></svg>
+          <svg class="icon icon-off" viewBox="0 0 24 24" aria-hidden="true" hidden><path fill="currentColor" d="M4 9.5h3.2L12 5v14l-4.8-4.5H4v-5z"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" d="M16 10l5 5M21 10l-5 5"/></svg>
+        </button>
+        <button type="button" id="btn-full" aria-pressed="false" aria-label="全屏">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M9 4H4v5M15 4h5v5M20 15v5h-5M4 15v5h5"/></svg>
+        </button>
+        <button type="button" id="btn-pause" aria-pressed="false" aria-label="暂停">
+          <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 5h3.2v14H7zM13.8 5H17v14h-3.2z"/></svg>
+          <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true" hidden><path fill="currentColor" d="M8 5.2l11 6.8-11 6.8z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="stats" aria-label="计分">
+      <div>
+        <span>得分</span>
+        <strong id="score" data-score="0">0</strong>
+      </div>
+      <div>
+        <span>最高分</span>
+        <strong id="best" data-best="0">0</strong>
+      </div>
+      <div>
+        <span id="speed-label">速度 · Lv.1</span>
+        <strong id="speed" data-level="1" data-speed="150">150ms</strong>
+      </div>
+    </section>
+
+    <div id="stage">
+      <div id="ai-banner" hidden>
+        <span>🤖 AI 演示中</span>
+        <button type="button" id="btn-rate" aria-label="演示速度，当前 ×1">×1</button>
+      </div>
+      <div id="board-box">
+        <div id="board-frame">
+          <canvas id="board" width="400" height="400" role="img" aria-label="贪吃蛇棋盘，20 乘 20"></canvas>
+          <div id="flash" hidden></div>
+        </div>
+      </div>
+    </div>
+
+    <p id="hints">方向键 / WASD 移动 · 空格 / P 暂停 · R 重开 · M 静音</p>
+    <p id="compact-hint">滑动棋盘即可转向</p>
+    <div id="dpad" aria-label="方向键">
+      <button type="button" data-dir="up" aria-label="向上">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 6l7 8H5z"/></svg>
+      </button>
+      <button type="button" data-dir="left" aria-label="向左">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 12l8-7v14z"/></svg>
+      </button>
+      <button type="button" data-dir="pause" aria-label="暂停">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 6h2.6v12H8zM13.4 6H16v12h-2.6z"/></svg>
+      </button>
+      <button type="button" data-dir="right" aria-label="向右">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18 12l-8 7V5z"/></svg>
+      </button>
+      <button type="button" data-dir="down" aria-label="向下">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 18l-7-8h14z"/></svg>
+      </button>
+    </div>
+
+    <div id="overlay-start" class="overlay">
+      <div class="panel">
+        <p class="eyebrow">20 × 20</p>
+        <h2>准备好了吗</h2>
+        <p class="lede">吃掉果实会变长。每 4 分升一级，速度跟着加快。别撞墙，也别咬到自己。填满 400 格即通关。</p>
+        <div class="diff" role="radiogroup" aria-label="难度">
+          <button type="button" role="radio" data-diff="easy" aria-checked="false">简单</button>
+          <button type="button" role="radio" data-diff="normal" aria-checked="true">普通</button>
+          <button type="button" role="radio" data-diff="hard" aria-checked="false">困难</button>
+          <button type="button" role="radio" data-diff="insane" aria-checked="false">疯狂</button>
+        </div>
+        <button type="button" id="btn-start" class="primary">开始游戏</button>
+        <button type="button" id="btn-watch" class="ai-cta">🤖 看 AI 演示</button>
+      </div>
+    </div>
+
+    <div id="overlay-pause" class="overlay" hidden>
+      <div class="panel">
+        <p class="eyebrow">暂停</p>
+        <h2>已暂停</h2>
+        <p class="lede">空格或 P 继续。R 会重开这一局。</p>
+        <button type="button" id="btn-resume" class="primary">继续</button>
+      </div>
+    </div>
+
+    <div id="overlay-end" class="overlay" hidden>
+      <div class="panel">
+        <p class="eyebrow" id="end-kicker">本局结束</p>
+        <h2 id="end-title">游戏结束</h2>
+        <p id="end-score" class="end-score">得分 0</p>
+        <p id="end-msg" class="lede"></p>
+        <button type="button" id="btn-again" class="primary">再来一局</button>
+        <button type="button" id="btn-watch-end" class="ai-cta">🤖 看 AI 演示</button>
+        <button type="button" id="btn-home" class="ghost">返回标题</button>
+      </div>
+    </div>
+
+    <p id="live" class="sr-only" aria-live="polite"></p>
+  </div>
+  <script src="ai.js?v=1"></script>
+  <script src="game.js?v=1"></script>
+</body>
+</html>
